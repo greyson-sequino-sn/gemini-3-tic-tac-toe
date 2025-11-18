@@ -1,6 +1,6 @@
 import React from 'react';
 import { GameMode } from '../types';
-import { Users, Bot, RotateCcw, Trophy } from 'lucide-react';
+import { Users, Bot, RotateCcw, Globe } from 'lucide-react';
 import { DIFFICULTIES } from '../constants';
 
 interface GameControlsProps {
@@ -10,6 +10,7 @@ interface GameControlsProps {
   setDifficulty: (diff: string) => void;
   onReset: () => void;
   scores: { player1: number; player2: number; draws: number };
+  isOnlineConnected?: boolean;
 }
 
 export const GameControls: React.FC<GameControlsProps> = ({ 
@@ -18,7 +19,8 @@ export const GameControls: React.FC<GameControlsProps> = ({
   difficulty,
   setDifficulty,
   onReset,
-  scores
+  scores,
+  isOnlineConnected
 }) => {
   return (
     <div className="flex flex-col gap-6 w-full max-w-md">
@@ -36,7 +38,7 @@ export const GameControls: React.FC<GameControlsProps> = ({
         </div>
         <div className="flex flex-col">
           <span className="text-xs uppercase tracking-wider text-slate-400">
-            {gameMode === GameMode.LOCAL_PVP ? 'Player O' : 'Gemini'}
+            {gameMode === GameMode.LOCAL_PVP ? 'Player O' : (gameMode === GameMode.ONLINE ? 'Opponent' : 'Gemini')}
           </span>
           <span className="text-2xl font-bold text-fuchsia-400">{scores.player2}</span>
         </div>
@@ -47,23 +49,33 @@ export const GameControls: React.FC<GameControlsProps> = ({
         <div className="flex gap-2">
           <button
             onClick={() => setGameMode(GameMode.LOCAL_PVP)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-2 text-sm sm:text-base rounded-lg transition-all ${
               gameMode === GameMode.LOCAL_PVP 
                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
                 : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
             }`}
           >
-            <Users size={18} /> Local PvP
+            <Users size={16} /> Local
           </button>
           <button
             onClick={() => setGameMode(GameMode.VS_AI)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-2 text-sm sm:text-base rounded-lg transition-all ${
               gameMode === GameMode.VS_AI 
                 ? 'bg-fuchsia-600 text-white shadow-lg shadow-fuchsia-500/20' 
                 : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
             }`}
           >
-            <Bot size={18} /> Vs Gemini
+            <Bot size={16} /> AI
+          </button>
+          <button
+            onClick={() => setGameMode(GameMode.ONLINE)}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-2 text-sm sm:text-base rounded-lg transition-all ${
+              gameMode === GameMode.ONLINE
+                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20' 
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }`}
+          >
+            <Globe size={16} /> Online
           </button>
         </div>
 
@@ -87,7 +99,8 @@ export const GameControls: React.FC<GameControlsProps> = ({
 
         <button
           onClick={onReset}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-all active:scale-95"
+          disabled={gameMode === GameMode.ONLINE && !isOnlineConnected}
+          className="w-full flex items-center justify-center gap-2 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-all active:scale-95"
         >
           <RotateCcw size={18} /> Reset Game
         </button>

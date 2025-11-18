@@ -11,6 +11,7 @@ export interface GameState {
 export enum GameMode {
   LOCAL_PVP = 'LOCAL_PVP',
   VS_AI = 'VS_AI',
+  ONLINE = 'ONLINE',
 }
 
 export interface AIMoveResponse {
